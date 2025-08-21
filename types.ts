@@ -1,4 +1,3 @@
-
 export enum TransactionType {
   INCOME = 'INCOME',
   EXPENSE = 'EXPENSE',
@@ -17,6 +16,8 @@ export interface Debt {
   id: string;
   creditor: string;
   totalAmount: number;
-  amountPaid: number;
-  dueDate: string;
+  monthlyInstallment: number;
+  totalInstallmentMonths: number;
+  monthsPaid: number;
+  startDate: string;
 }

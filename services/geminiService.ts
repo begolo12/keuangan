@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 import { Transaction, Debt, TransactionType } from '../types';
 
@@ -24,7 +23,9 @@ const formatDataForPrompt = (transactions: Transaction[], debts: Debt[]): string
   promptData += "\nDATA HUTANG:\n";
   if (debts.length > 0) {
     debts.forEach(d => {
-      promptData += `- Pemberi Hutang: ${d.creditor}, Total Hutang: Rp ${d.totalAmount.toLocaleString('id-ID')}, Sudah Dibayar: Rp ${d.amountPaid.toLocaleString('id-ID')}, Jatuh Tempo: ${d.dueDate}\n`;
+       const remainingMonths = d.totalInstallmentMonths - d.monthsPaid;
+       const remainingDebt = remainingMonths * d.monthlyInstallment;
+      promptData += `- Pemberi Hutang: ${d.creditor}, Total Hutang: Rp ${d.totalAmount.toLocaleString('id-ID')}, Cicilan/Bulan: Rp ${d.monthlyInstallment.toLocaleString('id-ID')}, Durasi: ${d.totalInstallmentMonths} bulan, Sudah Dibayar: ${d.monthsPaid} bulan, Sisa Hutang: Rp ${remainingDebt.toLocaleString('id-ID')}, Mulai: ${d.startDate}\n`;
     });
   } else {
     promptData += "Tidak ada data hutang.\n";
@@ -51,7 +52,7 @@ export const analyzeFinancials = async (transactions: Transaction[], debts: Debt
     1.  **Ringkasan Kesehatan Keuangan:** Berikan gambaran umum tentang kondisi keuangan pengguna saat ini. Apakah sehat, perlu perbaikan, atau dalam kondisi kritis?
     2.  **Analisis Arus Kas (Cash Flow):** Hitung dan jelaskan total pemasukan, total pengeluaran, dan sisa uang (surplus/defisit). Berikan komentar tentang pola arus kas.
     3.  **Pola Pengeluaran:** Identifikasi 3 kategori pengeluaran terbesar. Berikan wawasan tentang kebiasaan belanja pengguna. Apakah ada pengeluaran yang bisa dikurangi?
-    4.  **Strategi Manajemen Hutang:** Tinjau data hutang. Berikan saran konkret tentang cara melunasi hutang lebih cepat. Mungkin sarankan metode "bola salju" atau "longsoran hutang" jika relevan.
+    4.  **Strategi Manajemen Hutang:** Tinjau data hutang. Berdasarkan cicilan bulanan dan sisa hutang, berikan saran konkret tentang cara melunasi hutang lebih cepat. Mungkin sarankan metode "bola salju" atau "longsoran hutang" jika relevan.
     5.  **Rekomendasi & Langkah Selanjutnya:** Berikan 3-5 langkah praktis dan dapat ditindaklanjuti yang bisa diambil pengguna untuk meningkatkan kesehatan keuangan mereka.
     
     Gunakan bahasa yang positif dan memberdayakan. Hindari jargon yang rumit. Buat respons Anda terstruktur dengan baik menggunakan heading, bold, dan bullet points agar mudah dibaca.
